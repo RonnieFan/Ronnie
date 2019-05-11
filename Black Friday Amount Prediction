@@ -1,0 +1,339 @@
+bf <- read.csv("BlackFriday.csv",header = TRUE)
+dim(bf)
+summary(bf)
+str(bf)
+sum(complete.cases(bf))
+
+# install.packages("ggplot2")
+library(ggplot2)
+# install.packages("plotly")
+library(plotly)
+# install.packages("dplyr")
+library(dplyr)
+
+
+## Total Purchase Distribution
+```{r,echo=FALSE}
+bf %>%
+group_by(User_ID) %>%
+summarise(total_purchase = sum(Purchase)) %>%
+ggplot(aes(x = total_purchase)) + 
+geom_histogram(col = 'black', fill = 'blue', binwidth = 300000, center = 150000) +
+theme_linedraw() + 
+theme(panel.background = element_rect(fill = "gainsboro", colour = "white", size = 0.5, linetype = "solid"), #theme panel settings
+      plot.background = element_rect(fill = "gainsboro"), #theme panel settings
+      panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"), #theme panel settings
+      panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "white"), #theme panel settings
+      plot.title = element_text(hjust = 0, face = 'bold',color = 'black'), #title settings
+      plot.subtitle = element_text(face = "italic")) + #subtitle settings
+labs(x = 'Dollars', y = 'Number of Buyers', title = "Black Friday", #name title and axis
+     subtitle = "Distribution of total purchasing by buyers") + #name subtitle
+scale_y_continuous(limits = c(0,2000), breaks = c(0,500,1000,1500,2000)) + #set axis limits and break
+scale_x_continuous(labels = scales::comma) #prevent scientific number in x-axis
+```
+
+## Total Purchase by City
+```{r,echo=FALSE}
+bf %>%
+group_by(User_ID, City_Category) %>%
+summarise(total_purchase = sum(Purchase)) %>%
+ggplot(aes(x = total_purchase, group = City_Category)) + 
+geom_histogram(aes(fill=City_Category),col = 'black', binwidth = 300000, center = 150000) +
+theme_linedraw() + 
+theme(legend.box.background	= element_rect(colour = "black"),
+      legend.background = element_rect(fill = "gainsboro"),
+      panel.background = element_rect(fill = "gainsboro", colour = "white", size = 0.5, linetype = "solid"), #theme panel settings
+      plot.background = element_rect(fill = "gainsboro"), #theme panel settings
+      panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"), #theme panel settings
+      panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "white"), #theme panel settings
+      plot.title = element_text(hjust = 0, face = 'bold',color = 'black'), #title settings
+      plot.subtitle = element_text(face = "italic")) + #subtitle settings
+labs(x = 'Dollars', y = 'Number of Buyers', title = "Black Friday", #name title and axis
+     subtitle = "Distribution of total purchasing by buyers") + #name subtitle
+guides(fill=guide_legend(title = "City")) +
+scale_y_continuous(limits = c(0,2000), breaks = c(0,500,1000,1500,2000)) + #set axis limits and break
+scale_x_continuous(labels = scales::comma) #prevent scientific number in x-axis
+```
+
+## Total Purchase by City
+```{r,echo=FALSE}
+bf %>%
+group_by(User_ID, City_Category) %>%
+summarise(total_purchase = sum(Purchase)) %>%
+ggplot(aes(x = total_purchase, group = City_Category)) + 
+geom_histogram(aes(fill=City_Category),col = 'black', binwidth = 300000, center = 150000) +
+theme_linedraw() + 
+theme(legend.box.background	= element_rect(colour = "black"),
+      legend.background = element_rect(fill = "gainsboro"),
+      panel.background = element_rect(fill = "gainsboro", colour = "white", size = 0.5, linetype = "solid"), #theme panel settings
+      plot.background = element_rect(fill = "gainsboro"), #theme panel settings
+      panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"), #theme panel settings
+      panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "white"), #theme panel settings
+      plot.title = element_text(hjust = 0, face = 'bold',color = 'black'), #title settings
+      plot.subtitle = element_text(face = "italic")) + #subtitle settings
+labs(x = 'Dollars', y = 'Number of Buyers', title = "Black Friday", #name title and axis
+     subtitle = "Distribution of total purchasing by buyers") + #name subtitle
+guides(fill=guide_legend(title = "City")) +
+scale_y_continuous(limits = c(0,2000), breaks = c(0,500,1000,1500,2000)) + #set axis limits and break
+scale_x_continuous(labels = scales::comma) #prevent scientific number in x-axis
+
+## Total Purchase by Gender
+```{r,echo=FALSE}
+gender <- bf %>%
+          group_by(Gender) %>%
+          distinct(User_ID) %>%
+          summarise(Total=n())
+```
+
+```{r,echo=FALSE}
+plot_ly(gender, labels = ~Gender, values = ~Total, type = 'pie',
+        textposition = 'inside',
+        textinfo = 'label+percent',
+        insidetextfont = list(color = '#FFFFFF'),
+        hoverinfo = 'text',
+        text = ~paste(Total, 'People'),
+        marker = list(colors = colors,
+        line = list(color = '#FFFFFF', width = 1)), showlegend = FALSE) %>%
+layout(title = 'Gender', titlefont = list(size = 18, color = 'black'),
+       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+```
+
+## Total Purchase by Age
+```{r,echo=FALSE}
+age <- bf %>%
+       group_by(Age) %>%
+       summarise(Total=n())
+```
+
+```{r,echo=FALSE}
+plot_ly(age, labels = ~Age, values = ~Total, type = 'pie',
+        textposition = 'inside',
+        textinfo = 'label+percent',
+        insidetextfont = list(color = '#FFFFFF'),
+        hoverinfo = 'text',
+        text = ~paste(Total, 'People'),
+        marker = list(colors = colors,
+        line = list(color = '#FFFFFF', width = 1)), showlegend = FALSE) %>%
+layout(title = 'Age Distribution', titlefont = list(size = 18, color = 'black'),
+       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+```
+
+### Data Preparation
+
+```{r,echo=FALSE}
+bf$User_ID <- NULL
+bf$Product_ID<- NULL
+bf$Marital_Status = as.factor(bf$Marital_Status)
+```
+
+```{r,echo=FALSE}
+new_bf <- na.omit(bf)
+summary(new_bf)
+str(new_bf)
+```
+
+## simple linear model
+```{r,echo=FALSE}
+lm_1 = lm(Purchase~.,data = new_bf)
+summary(lm_1)
+```
+
+## forward stepwise selection
+```{r}
+library(MASS)
+templm1 <- lm(Purchase~1,new_bf)
+tempScope1 <- formula(lm(Purchase~.,new_bf))
+forwardstep <- stepAIC(templm1,scope=tempScope1,direction="forward")
+forwardstep$anova
+```
+
+```{r}
+templm2 <- lm(Purchase~.,new_bf)
+tempScope2 <- formula(lm(Purchase~1,new_bf))
+backwardstep <- stepAIC(templm2,scope=tempScope2,direction = "backward",trace = F)
+backwardstep$anova
+```
+```{r}
+lm_2 <- lm(Purchase~ Gender+ Age+ Occupation+ City_Category+ Product_Category_1 + Product_Category_2 + Product_Category_3, data = new_bf)
+summary(lm_2)
+```
+
+## Response transformation
+```{r}
+lm_3 <- lm(log(Purchase)~ Gender+ Age+ Occupation+ City_Category+ Product_Category_1 + Product_Category_2 + Product_Category_3, data = new_bf)
+summary(lm_3)
+```
+
+## Diagnostics
+```{r}
+plot(lm_3,2)
+```
+
+```{r}
+plot(lm_3,3)
+```
+
+```{r}
+plot(lm_3,4)
+```
+# Evaluate autocorrelation
+```{r,warning=FALSE}
+library(car)
+durbinWatsonTest(lm_3)
+```
+# Evaluate multicollinearity
+```{r}
+library(car)
+vif(lm_3)
+```
+### Evaluate MSE
+```{r}
+glm_fit <- glm(formula = lm_3,family = gaussian,new_bf)
+# install.packages("boot")
+library(boot)
+glm_fit <- cv.glm(new_bf,glm_fit,K=10)
+glm_fit$delta[1]
+```
+
+## Compare confidence intervals
+```{r}
+normci <- confint(lm_3,level = .95)
+print(normci)
+```
+
+```{r}
+library(boot)
+bs <- function(data, i) {
+  d <- data[i,] 
+  fit <- glm(formula = lm_3,data=d)
+  return(coef(fit))
+}
+bootResults <- boot(data=new_bf,statistic=bs,stype="i",R=1000)
+bootcidata<- bootResults$t
+bootci<- matrix(0,nrow=14,ncol=2)
+for(i in 1:14){
+  bootci[i,1]<-quantile(bootcidata[,i],0.025)
+  bootci[i,2]<-quantile(bootcidata[,i],0.975)
+}
+bootci<-data.frame(bootci)
+colnames(bootci)<-colnames(normci)
+rownames(bootci)<-rownames(normci)
+print(as.matrix(bootci))
+```
+
+## Ploynomial regression
+```{r}
+OccupationMSE <- rep(0,10)
+for(i in 1:10){
+  templm <- glm(log(Purchase)~ Gender+ Age+ poly(Occupation,i)+ City_Category+ Product_Category_1 + Product_Category_2 + Product_Category_3,data=new_bf)
+  tempCV <- cv.glm(new_bf,templm,K = 10)
+  OccupationMSE[i] <- tempCV$delta[1]
+}
+plot(OccupationMSE)
+```
+```{r}
+PC1MSE <- rep(0,10)
+for(i in 1:10){
+  templm <- glm(log(Purchase)~ Gender+ Age+ poly(Occupation,10)+ City_Category+ poly(Product_Category_1,i) + Product_Category_2 + Product_Category_3,data=new_bf)
+  tempCV <- cv.glm(new_bf,templm,K = 10)
+  PC1MSE[i] <- tempCV$delta[1]
+}
+plot(PC1MSE)
+```
+
+```{r}
+PC2MSE <- rep(0,10)
+for(i in 1:10){
+  templm <- glm(log(Purchase)~ Gender+ Age+ poly(Occupation,10)+ City_Category+ poly(Product_Category_1,9) + poly(Product_Category_2,i) + Product_Category_3,data=new_bf)
+  tempCV <- cv.glm(new_bf,templm,K = 10)
+  PC2MSE[i] <- tempCV$delta[1]
+}
+plot(PC2MSE)
+```
+## Splines
+```{r}
+library(gamclass)
+CVgam(log(Purchase)~ Gender+ Age+ Occupation+ City_Category+ s(Product_Category_1) + s(Product_Category_2) + Product_Category_3, data = new_bf,nfold=10)$cvscale
+```
+
+```{r}
+CVgam(log(Purchase)~ Gender+ Age+ Occupation+ City_Category+ s(Product_Category_1) + s(Product_Category_2) + s(Product_Category_3), data = new_bf,nfold=10)$cvscale
+```
+## Interaction terms
+```{r}
+lm_4 <- lm(log(Purchase)~ Gender+ Age+ Occupation+ City_Category+ Product_Category_1*Product_Category_2 + Product_Category_3, data = new_bf)
+glm_inter <- glm(formula = lm_4,family = Gamma,new_bf)
+glm_inter_err <- cv.glm(new_bf,glm_inter,K=10)
+glm_inter_err$delta[1]
+```
+### graphical model
+```{r}
+str(new_bf)
+```
+
+```{r}
+new_bf$Gender = as.numeric(new_bf$Gender)
+new_bf$Age = as.numeric(new_bf$Age)
+new_bf$Marital_Status = as.numeric(new_bf$Marital_Status)
+new_bf$Stay_In_Current_City_Years = as.numeric(new_bf$Stay_In_Current_City_Years)
+new_bf$City_Category = as.numeric(new_bf$City_Category)
+```
+
+```{r}
+# install.packages("huge")
+library(huge)
+huge1 <- huge(as.matrix(new_bf),method = "glasso",nlambda = 20,lambda.min.ratio = 0.4)
+plot.huge(huge1)
+```
+
+```{r}
+huge2 <- huge(as.matrix(new_bf),method = "glasso",nlambda = 10,lambda.min.ratio = 0.4)
+plot.huge(huge2)
+```
+
+```{r}
+huge3 <- huge(as.matrix(new_bf),method = "glasso",nlambda = 5,lambda.min.ratio = 0.4)
+plot.huge(huge3)
+```
+### XGboost
+## Separate the whole dataset into training set and testing set
+
+```{r}
+new_bf[,10] <-log(new_bf[,10])
+```
+
+First, we need to make a log transformation on the respond variable as to be consistent with our former models.
+
+```{r,echo=FALSE}
+sample = sample(1:nrow(new_bf),size = floor(nrow(new_bf)*0.7))
+train = new_bf[sample,]
+test = new_bf[-sample,]
+x.train <- train[,-10]
+y.train <- train[,10]
+x.test <- test[,-10]
+y.test <- test[,10]
+```
+sparate the whole dataset into training set and testing set.
+```{r}
+# install.packages("xgboost")
+library(xgboost)
+xgbtrain <- xgb.DMatrix(data = as.matrix(x.train),label=as.matrix(y.train))
+xgb <- xgboost(xgbtrain,objective='reg:linear',eval_metric='rmse',nrounds = 100,maxdepth=5)
+xgb.pre <- predict(xgb,newdata=as.matrix(x.test))
+mean((xgb.pre-y.test)^2) 
+```
+The MSE of Xgboost method is only about 0.127, which is significantly smaller than the results derived from any former models. In this case, we can conclude that this method is very powerful to be used to make predictions on purchase due to its high accuracy.
+
+## randomforest
+```{r}
+library(randomForest)
+rf <- randomForest(x.train,y.train,xtest=x.test,ytest=y.test,mtry=3,ntree=150,importance=TRUE)
+plot(rf)
+print(rf)
+```
+
+
+
+
